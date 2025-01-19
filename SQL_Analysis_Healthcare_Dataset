@@ -1,0 +1,130 @@
+/*
+
+Data Used: 
+"Healthcare Dataset" published by Prasad Patil on Kaggle 
+Link: https://www.kaggle.com/datasets/prasad22/healthcare-dataset
+
+*/
+
+# SQL Questions and Queries
+
+#1. Average Billing Amount by Admission Type
+
+SELECT 
+    "Admission Type", 
+    AVG("Billing Amount") AS "Average Billing Amount"
+FROM healthcare_dataset
+WHERE "Admission Type" IN ('Urgent', 'Elective', 'Emergency')
+GROUP BY "Admission Type"
+ORDER BY "Average Billing Amount" DESC;
+
+#2. Top 3 Most Commonly Prescribed Medication by Medical Condition
+
+WITH RankedMedications AS (
+    SELECT 
+        "Medical Condition", 
+        "Medication", 
+        COUNT("Medication") AS "Prescription Count",
+        ROW_NUMBER() OVER (PARTITION BY "Medical Condition" ORDER BY COUNT("Medication") DESC) AS "Rank"
+    FROM healthcare_dataset
+    WHERE "Medication" NOT LIKE '____-__-__' -- Exclude date-like entries
+    GROUP BY "Medical Condition", "Medication"
+)
+SELECT 
+    "Medical Condition", 
+    "Medication", 
+    "Prescription Count"
+FROM RankedMedications
+WHERE "Rank" <= 3
+ORDER BY "Medical Condition", "Prescription Count" DESC;
+
+#3. Average Length of Stay by Admission Type
+
+SELECT 
+    "Admission Type", 
+    AVG(JULIANDAY("Discharge Date") - JULIANDAY("Date of Admission")) AS "Average Length of Stay (Days)"
+FROM healthcare_dataset
+WHERE "Admission Type" IN ('Emergency', 'Elective', 'Urgent')
+GROUP BY "Admission Type"
+ORDER BY "Average Length of Stay (Days)" DESC;
+
+#4. Most Common Medical Conditions for Each Admission Type
+
+SELECT 
+    "Admission Type", 
+    "Medical Condition", 
+    COUNT(*) AS "Condition Count"
+FROM healthcare_dataset
+WHERE "Admission Type" IN ('Emergency', 'Elective', 'Urgent')
+GROUP BY "Admission Type"
+ORDER BY "Condition Count" DESC;
+
+
+# Example Email/Report to Manager:
+
+Dear Manager,
+
+Please find below the latest analysis on our healthcare dataset:
+1. Average Billing Amount by Admission Type
+
+Objective:
+To analyze the average billing amount for different admission types.
+
+Key Findings:
+
+    Emergency Admission: Average billing amount is $25,671.94.
+    Elective Admission: Average billing amount is $24,587.67.
+    Urgent Admission: Average billing amount is $24,396.82.
+
+These findings indicate that Emergency admissions tend to have a higher average billing compared to Elective and Urgent admissions. This may be due to the nature of the emergency treatments and procedures, which often require more intensive medical care and resources.
+2. Top 3 Most Commonly Prescribed Medication by Medical Condition
+
+Objective:
+To identify the most commonly prescribed medications for different medical conditions.
+
+Key Findings:
+
+    Arthritis: The most prescribed medications are Aspirin (1,288), Penicillin (1,252), and Paracetamol (1,220).
+    Asthma: The top medications are Penicillin (1,265), Lipitor (1,254), and Aspirin (1,215).
+    Cancer: The most common medications are Ibuprofen (1,257), Lipitor (1,250), and Aspirin (1,223).
+
+This analysis provides valuable insights into treatment patterns, which can help optimize medication availability for the most common conditions across various patient types.
+3. Average Length of Stay by Admission Type
+
+Objective:
+To analyze the average length of stay based on the type of admission.
+
+Key Findings:
+
+    Emergency Admissions: Average length of stay is 15.65 days.
+    Elective Admissions: Average length of stay is 15.49 days.
+    Urgent Admissions: Average length of stay is 15.46 days.
+
+The data suggests that patients admitted for Emergency procedures have a slightly longer stay compared to Elective and Urgent admissions, which could indicate more complex care requirements.
+4. Most Common Medical Conditions for Each Admission Type
+
+Objective:
+To identify the most common medical conditions for each admission type.
+
+Key Findings:
+
+    Urgent Admissions: The most common condition is Cancer, with 12,374 occurrences.
+    Elective Admissions: Asthma is the most common condition, with 12,316 occurrences.
+    Emergency Admissions: Obesity ranks as the top condition, with 12,175 occurrences.
+
+The results demonstrate the prevalence of certain conditions under different admission types, highlighting potential areas for resource allocation and care planning. Specifically, urgent admissions are highly associated with Cancer, while Asthma is predominant in elective admissions, and Obesity is most frequent in emergency admissions.
+
+Please let me know if you would like any further details or deeper analysis on any of these findings. I look forward to your feedback.
+
+Best regards,
+John P.
+
+
+
+
+
+
+
+
+
+
