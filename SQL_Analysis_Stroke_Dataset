@@ -1,0 +1,186 @@
+/* 
+Data Used: 
+
+"Stroke Prediction Dataset" published by fedesoriano on Kaggle 
+
+Link: https://www.kaggle.com/datasets/fedesoriano/stroke-prediction-dataset
+*/
+
+# SQL Questions and Queries
+
+
+#1. Average Age of Stroke Patients by Gender
+
+SELECT 
+    "gender", 
+    AVG("age") AS "average_age"
+FROM stroke_data
+WHERE "stroke" = "1"
+GROUP BY "gender";
+
+#2. Count of Patients with Hypertension Who Experienced a Stroke
+
+SELECT 
+    COUNT(*) AS "stroke_with_hypertension_count"
+FROM stroke_data
+WHERE "stroke" = 1 AND "hypertension" = 1;
+
+#3. Average Glucose Levels for Stroke vs. Non-Stroke Patients
+
+SELECT 
+    "stroke", 
+    AVG("avg_glucose_level") AS "average_glucose_level"
+FROM stroke_data
+GROUP BY "stroke";
+
+#4. Distribution of BMI Across Smoking Status
+
+SELECT 
+    "smoking_status", 
+    AVG("bmi") AS "average_bmi"
+FROM stroke_data
+GROUP BY "smoking_status";
+
+#5. Identifying the Highest-Risk Demographic for Stroke (with Hypertension and Smoking)
+
+SELECT 
+    "age", 
+    "hypertension", 
+    "smoking_status", 
+    COUNT(*) AS "high_risk_count"
+FROM stroke_data
+WHERE "stroke" = "1" AND "hypertension" = "1"
+GROUP BY "age", "hypertension", "smoking_status"
+ORDER BY "high_risk_count" DESC
+LIMIT 5;
+
+
+# Example Email/Report to Manager:
+
+Subject: Stroke Data Analysis Report: Insights on Hypertension, Glucose Levels, and Stroke Risk Demographics
+
+Dear Manager,
+
+I hope this message finds you well. Below is the summary of the analysis based on the stroke prediction dataset, 
+highlighting key insights around hypertension, glucose levels, BMI, and high-risk demographics.
+
+1. Average Age of Stroke Patients by Gender
+
+Objective: To compare the average age of stroke patients by gender.
+
+Key Findings:
+
+    Female patients: 67.14 years
+    Male patients: 68.50 years
+
+Insight:
+On average, male stroke patients are older than female stroke patients. 
+This suggests that men may experience stroke later in life, possibly requiring different preventive strategies. 
+This insight can inform targeted interventions based on gender and age.
+
+2. Average Glucose Level by Gender
+
+Objective: To compare the average glucose levels between male and female stroke patients.
+
+Key Findings:
+
+    Female stroke patients: 132.54 mg/dL
+    Male stroke patients: 104.80 mg/dL
+
+Insight:
+Female stroke patients have significantly higher average glucose levels compared to their male counterparts. 
+This indicates that glucose management might be particularly important for female stroke patients, 
+pointing to the need for gender-specific stroke prevention strategies.
+
+3. Number of Hypertensive Stroke Patients
+
+Objective: To identify how many stroke patients also have hypertension.
+
+Key Findings:
+
+    66 patients with hypertension also experienced a stroke.
+
+Insight:
+Hypertension is strongly correlated with stroke risk. This highlights the importance of addressing hypertension as part of
+stroke prevention, emphasizing early interventions for hypertensive patients.
+
+4. Average BMI by Smoking Status
+
+Objective: To compare the average BMI for stroke patients based on smoking status.
+
+Key Findings:
+
+    Unknown smoking status: 24.65
+    Formerly smoked: 29.08
+    Never smoked: 29.35
+    Smokes: 28.53
+
+Insight:
+Patients who have never smoked and those who formerly smoked show similar and elevated BMI levels. 
+This suggests that while smoking cessation may reduce stroke risk, elevated BMI remains a significant concern,
+particularly in former smokers. Healthcare interventions should focus 
+on weight management alongside smoking cessation programs.
+
+5. Highest-Risk Demographic for Stroke Based on Age, Hypertension, and Smoking Status
+
+Objective: To identify the highest-risk demographic for stroke by analyzing age, hypertension, and smoking status.
+
+Key Findings:
+
+    The highest-risk demographic includes individuals aged 78-80, with hypertension, and varying smoking statuses:
+        Never smoked: 4 cases (80 years old)
+        Formerly smoked: 3 cases (78 years old)
+        Smokes: 2 cases (61 years old)
+
+Insight:
+Elderly patients with hypertension are at the highest risk for stroke, regardless of their smoking history. 
+However, the 80-year-old age group with hypertension and no smoking history stands out as particularly vulnerable. 
+This suggests that healthcare systems should prioritize stroke prevention in hypertensive patients aged 75 and above, 
+regardless of their smoking habits.
+
+Please let me know if further analysis is needed or if you have any questions regarding these insights.
+
+Best regards,
+John P.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
