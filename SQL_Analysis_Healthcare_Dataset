@@ -65,6 +65,7 @@ ORDER BY "Condition Count" DESC;
 Dear Manager,
 
 Please find below the latest analysis on our healthcare dataset:
+
 1. Average Billing Amount by Admission Type
 
 Objective:
@@ -76,7 +77,10 @@ Key Findings:
     Elective Admission: Average billing amount is $24,587.67.
     Urgent Admission: Average billing amount is $24,396.82.
 
-These findings indicate that Emergency admissions tend to have a higher average billing compared to Elective and Urgent admissions. This may be due to the nature of the emergency treatments and procedures, which often require more intensive medical care and resources.
+These findings indicate that Emergency admissions tend to have a higher average billing compared 
+to Elective and Urgent admissions. This may be due to the nature of the emergency treatments and 
+procedures, which often require more intensive medical care and resources.
+
 2. Top 3 Most Commonly Prescribed Medication by Medical Condition
 
 Objective:
@@ -88,7 +92,9 @@ Key Findings:
     Asthma: The top medications are Penicillin (1,265), Lipitor (1,254), and Aspirin (1,215).
     Cancer: The most common medications are Ibuprofen (1,257), Lipitor (1,250), and Aspirin (1,223).
 
-This analysis provides valuable insights into treatment patterns, which can help optimize medication availability for the most common conditions across various patient types.
+This analysis provides valuable insights into treatment patterns, which can help optimize medication 
+availability for the most common conditions across various patient types.
+
 3. Average Length of Stay by Admission Type
 
 Objective:
@@ -100,7 +106,9 @@ Key Findings:
     Elective Admissions: Average length of stay is 15.49 days.
     Urgent Admissions: Average length of stay is 15.46 days.
 
-The data suggests that patients admitted for Emergency procedures have a slightly longer stay compared to Elective and Urgent admissions, which could indicate more complex care requirements.
+The data suggests that patients admitted for Emergency procedures have a slightly longer 
+stay compared to Elective and Urgent admissions, which could indicate more complex care requirements.
+
 4. Most Common Medical Conditions for Each Admission Type
 
 Objective:
@@ -112,7 +120,9 @@ Key Findings:
     Elective Admissions: Asthma is the most common condition, with 12,316 occurrences.
     Emergency Admissions: Obesity ranks as the top condition, with 12,175 occurrences.
 
-The results demonstrate the prevalence of certain conditions under different admission types, highlighting potential areas for resource allocation and care planning. Specifically, urgent admissions are highly associated with Cancer, while Asthma is predominant in elective admissions, and Obesity is most frequent in emergency admissions.
+The results demonstrate the prevalence of certain conditions under different admission types, highlighting 
+potential areas for resource allocation and care planning. Specifically, urgent admissions are highly associated with Cancer, 
+while Asthma is predominant in elective admissions, and Obesity is most frequent in emergency admissions.
 
 Please let me know if you would like any further details or deeper analysis on any of these findings. I look forward to your feedback.
 
