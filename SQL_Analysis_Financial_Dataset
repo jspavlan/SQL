@@ -1,0 +1,172 @@
+/* 
+Data Used: 
+
+"Financial Statements of Major Companies(2009-2023)" published by Rishabh Patil on Kaggle 
+
+Link: https://www.kaggle.com/datasets/rish59/financial-statements-of-major-companies2009-2023
+*/
+
+# SQL Questions and Queries
+
+
+#1. Companies with the Highest Market Cap
+
+SELECT 
+    "Company ", 
+    MAX(CAST("Market Cap(in B USD)" AS REAL)) AS "Highest Market Cap (B USD)"
+FROM fin_data
+GROUP BY "Company "
+ORDER BY "Highest Market Cap (B USD)" DESC
+LIMIT 5;
+
+#2. Top Companies by Average Return on Equity (ROE)
+
+SELECT 
+    "Company ", 
+    AVG("ROE") AS "Average ROE"
+FROM fin_data
+GROUP BY "Company "
+ORDER BY "Average ROE" DESC
+LIMIT 5;
+
+#3. Top Companies by Average Net Profit Margin
+
+SELECT 
+    "Company ", 
+    AVG("Net Profit Margin") AS "Average Net Profit Margin (%)"
+FROM fin_data
+GROUP BY "Company "
+ORDER BY "Average Net Profit Margin (%)" DESC
+LIMIT 5;
+
+#4. Top 5 Companies by Average Free Cash Flow per Share
+
+SELECT 
+    "Company ", 
+    AVG("Free Cash Flow per Share") AS "Average Free Cash Flow per Share"
+FROM fin_data
+GROUP BY "Company "
+ORDER BY "Average Free Cash Flow per Share" DESC
+LIMIT 5;
+
+#5. Correlation Between Debt/Equity Ratio and ROI Across Companies
+
+SELECT 
+    "Company ", 
+    AVG("Debt/Equity Ratio") AS "Avg Debt/Equity Ratio", 
+    AVG("ROI") AS "Avg ROI", 
+    (AVG("ROI") / AVG("Debt/Equity Ratio")) AS "ROI to Debt Ratio"
+FROM fin_data
+GROUP BY "Company "
+ORDER BY "ROI to Debt Ratio" DESC
+LIMIT 5;
+
+# Example Email/Report to Manager:
+
+Subject: Financial Analysis Report: Market Cap, ROE, Net Profit Margin, ROI to Debt Ratio, and Financial Efficiency
+
+Dear Manager,
+
+I hope this message finds you well. Please find below the latest financial analysis report, summarizing insights across key performance indicators: Market Cap, 
+Return on Equity (ROE), Net Profit Margin, ROI to Debt Ratio, and Financial Efficiency.
+
+1. Top Companies by Market Capitalization
+
+Objective: To identify the companies with the highest market capitalization, highlighting industry leaders.
+
+Key Findings:
+
+    Apple (AAPL): $2,913.28 billion
+    Microsoft (MSFT): $2,525.08 billion
+    Google (GOOG): $1,910.26 billion
+    Amazon (AMZN): $1,691.00 billion
+    NVIDIA (NVDA): $1,000.35 billion
+
+Insight: Apple and Microsoft dominate the market, leading as technology giants. Strategic collaborations with these firms could present significant growth opportunities.
+
+2. Top Companies by Average Return on Equity (ROE)
+
+Objective: To evaluate the companies generating the highest returns relative to shareholder equity.
+
+Key Findings:
+
+    Apple (AAPL): 61.27%
+    Microsoft (MSFT): 32.43%
+    Intel (INTC): 19.91%
+    NVIDIA (NVDA): 19.11%
+    Google (GOOG): 17.11%
+
+Insight: Apple maintains a significant lead, demonstrating exceptional profitability and shareholder value creation.
+
+3. Top Companies by Average Net Profit Margin
+
+Objective: To identify companies excelling in converting revenue into profit.
+
+Key Findings:
+
+    Microsoft (MSFT): 27.40%
+    Google (GOOG): 22.89%
+    McDonald's (MCD): 22.67%
+    Apple (AAPL): 22.53%
+    Intel (INTC): 21.39%
+
+Insight: Microsoft and Google lead in efficiency, indicating robust operational management and profitability strategies.
+
+4. Top Companies by ROI to Debt Ratio
+
+Objective: To assess financial efficiency by evaluating returns generated relative to debt levels.
+
+Key Findings:
+
+    Barclays (BCS): 0.60
+    McDonald's (MCD): 0.53
+    Microsoft (MSFT): 0.53
+    Apple (AAPL): 0.49
+    American International Group (AIG): 0.38
+
+Insight: Barclays demonstrates exceptional financial management, achieving high returns despite its debt structure.
+
+5. Top Companies by Financial Efficiency (ROI, ROA, Debt Ratio)
+
+Objective: To evaluate overall financial efficiency based on multiple performance metrics.
+
+Key Findings:
+
+    Google (GOOG): ROI: 0.047, ROA: 16.55%, Debt Ratio: 352.81%
+    NVIDIA (NVDA): ROI: 0.23, ROA: 15.34%, Debt Ratio: 66.70%
+    Microsoft (MSFT): ROI: 0.43, ROA: 24.59%, Debt Ratio: 57.83%
+    Intel (INTC): ROI: 0.29, ROA: 15.82%, Debt Ratio: 53.79%
+    PayPal (PYPL): ROI: 0.22, ROA: 10.64%, Debt Ratio: 49.14%
+
+Insight: Microsoft and Google combine strong ROI and ROA with manageable debt, indicating a balanced and efficient financial structure.
+
+Please let me know if additional analysis is needed or if you have any questions regarding these findings.
+
+Best regards,
+John P.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
