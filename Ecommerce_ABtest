@@ -1,0 +1,84 @@
+/*
+
+Data Used:
+"Ecommerce AB Testing 2022 Dataset1" published by putdejudomthai  on Kaggle
+
+*/
+
+1. Data Cleaning: Handling Mismatched A/B Test Data
+
+DELETE FROM ab_data
+WHERE ([group] = 'control' AND landing_page != 'old_page') 
+   OR ([group] = 'treatment' AND landing_page != 'new_page');
+
+2. Calculate Conversion Rates by Group
+
+SELECT 
+    [group], 
+    ROUND(COUNT(CASE WHEN CAST(converted AS INTEGER) = 1 THEN 1 END) * 1.0 / COUNT(*), 4) AS conversion_rate
+FROM ab_data
+GROUP BY [group];
+
+
+Results:
+Group	Conversion Rate
+control	0.1204
+treatment	0.1188
+
+Insight:
+
+The conversion rates are similar, with the control group at 0.1204 and the treatment group at 0.1188. 
+The minimal difference suggests no immediate effect from the treatment.
+Next, we’ll assess statistical significance to confirm whether this difference is meaningful.
+
+3. Statistical Testing: Hypothesis Test to Check for Significance
+
+-- We will perform a Chi-Square test to determine if the conversion rate difference is statistically significant
+-- First, we calculate the observed values (number of conversions and non-conversions) for each group
+
+SELECT 
+    group,
+    COUNT(CASE WHEN converted = 1 THEN 1 END) AS conversions,
+    COUNT(CASE WHEN converted = 0 THEN 1 END) AS non_conversions
+FROM ab_data
+GROUP BY group;
+
+RESULTS:
+
+group      conversions  non conversions
+control	   17489	       127785
+treatment	 17264	     128049
+
+4. Calculate Conversion Rates
+
+-- Calculate conversion rate for each group
+SELECT 
+    [group],
+    (SUM(CASE WHEN converted = '1' THEN 1 ELSE 0 END) * 1.0) / COUNT(*) AS conversion_rate
+FROM ab_data
+GROUP BY [group];
+
+RESULTS:
+
+group       conversion rate
+control	    0.12038630450046
+treatment	  0.11880561271187
+
+
+5. Finish with python
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
