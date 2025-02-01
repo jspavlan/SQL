@@ -1,0 +1,165 @@
+/*
+
+Data Used: 
+"Loan Default Dataset" published by M Yasser H on Kaggle 
+Link: https://www.kaggle.com/datasets/yasserh/loan-default-dataset
+
+*/
+
+# SQL Questions and Queries
+
+#1. Average Loan Amount by Loan Type and Gender
+
+SELECT 
+    "loan_type", 
+    "Gender",
+    AVG("loan_amount") AS "Average Loan Amount"
+FROM loan_default
+GROUP BY "loan_type", "Gender"
+ORDER BY "loan_type", "Average Loan Amount" DESC;
+
+#2. Average Loan Amount by Credit Score Range and Loan Type (with edge case handling)
+
+SELECT 
+    CASE 
+        WHEN "Credit_Score" < '300' THEN 'Below 300'
+        WHEN "Credit_Score" BETWEEN '300' AND '499' THEN '300-499'
+        WHEN "Credit_Score" BETWEEN '500' AND '599' THEN '500-599'
+        WHEN "Credit_Score" BETWEEN '600' AND '699' THEN '600-699'
+        WHEN "Credit_Score" BETWEEN '700' AND '799' THEN '700-799'
+        WHEN "Credit_Score" >= '800' THEN '800+'
+        ELSE 'Unknown' 
+    END AS "Credit_Score_Range",
+    "loan_type", 
+    AVG("loan_amount") AS "Average Loan Amount"
+FROM loan_default
+WHERE "Credit_Score" IS NOT NULL
+GROUP BY "Credit_Score_Range", "loan_type"
+ORDER BY "Credit_Score_Range", "loan_type";
+
+#3. Average Loan Amount by Loan Purpose and Term (with Proper Grouping)
+
+SELECT 
+    loan_purpose,
+    term,
+    AVG(loan_amount) AS avg_loan_amount
+FROM loan_default
+WHERE loan_purpose IS NOT NULL 
+  AND loan_purpose != ''
+GROUP BY loan_purpose, term
+ORDER BY loan_purpose, term;
+
+#4. LTV Analysis Across Loan Types and Default Status
+
+SELECT 
+    loan_type, 
+    AVG(LTV) AS avg_LTV, 
+    COUNT(*) AS total_loans, 
+    AVG(CASE WHEN Status = '1' THEN 1 ELSE 0 END) AS default_rate
+FROM loan_default
+GROUP BY loan_type
+ORDER BY avg_LTV DESC;
+
+
+# Example Email/Report to Manager:
+
+Dear Manager,
+
+Please find below the latest analysis on the loan default dataset:
+
+    Average Loan Amount by Loan Type and Gender
+
+Objective:
+To analyze the average loan amount by loan type and gender.
+
+Key Findings:
+
+    Personal Loans: The highest average loan amount is for males, at $113,173, compared to $76,500 for females.
+    Home Loans: Males also lead with an average loan amount of $203,700, whereas females average $120,000.
+    Auto Loans: Similar trends are seen, with males at $169,833 and females at $132,000.
+
+This analysis suggests that males generally tend to borrow higher loan amounts across all loan types, which may reflect differences in financial needs, income, or creditworthiness.
+
+    Average Loan Amount by Credit Score Range and Loan Type
+
+Objective:
+To analyze the average loan amount by credit score range and loan type, with edge case handling.
+
+Key Findings:
+
+    Credit Score '700-799': This range consistently shows the highest average loan amounts across all loan types, especially in Personal Loans ($76,500) and Home Loans ($203,700).
+    Credit Score 'Below 300': Borrowers in this category have significantly lower loan amounts, particularly in Home Loans ($76,500).
+    Credit Score '300-499': This range also shows lower loan amounts, reinforcing that lower credit scores correlate with smaller loans.
+
+This highlights the positive correlation between higher credit scores and loan amounts, which is expected as better credit scores typically lead to larger loan approvals.
+
+    Average Loan Amount by Loan Purpose and Term
+
+Objective:
+To analyze the average loan amount by loan purpose and term.
+
+Key Findings:
+
+    Home Loans: Consistently have the highest average loan amounts across all terms.
+    Auto Loans: Typically have lower loan amounts, particularly in shorter terms (36 months and 48 months).
+    Personal Loans: Show a moderate average loan amount across all terms, with higher values in longer-term loans.
+
+This suggests that home-related loans tend to involve larger sums, while auto and personal loans are generally smaller in comparison, with auto loans in shorter terms having the smallest amounts.
+
+    LTV Analysis Across Loan Types and Default Status
+
+Objective:
+To analyze the average Loan-to-Value (LTV) ratio and default rate across loan types.
+
+Key Findings:
+
+    Personal Loans: Highest average LTV at 76.95%, with a default rate of 34.54%.
+    Home Loans: Moderate LTV of 75.64%, with a default rate of 25.06%.
+    Auto Loans: The lowest average LTV at 61.89%, with a default rate of 22.77%.
+
+These findings indicate that higher LTV ratios correlate with higher default rates, which is typical for riskier loans. Personal loans, with the highest LTV, also show the highest default rate, which may suggest a need for more stringent credit assessments.
+
+Please let me know if you need further details or a deeper dive into any of these findings.
+
+Best regards,
+John P.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
