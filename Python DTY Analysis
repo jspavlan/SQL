@@ -1,0 +1,129 @@
+# DTY Efficiency Analysis: Machine Performance by SKU
+
+This project analyzes DTY (Draw Textured Yarn) efficiency data across multiple production machines. It focuses on identifying whether certain machines consistently underperform or outperform when producing the same SKU.
+
+## Tools Used
+- **Python (Pandas, NumPy)**
+- **Jupyter Notebook**
+- **Matplotlib (for plots, not included here)**
+- Tableau Public (for dynamic dashboard - separate)
+
+## Key Metrics
+- Mean & Std of Efficiency by Machine/SKU
+- Identification of SKUs run on multiple machines
+- Performance differences per SKU across machines
+- Export-ready dataset for executive visualization
+
+## Results
+- Over 17,000 observations analyzed
+- SKU F5C177A6 showed strong performance on Machine F5
+- Machine E1 had consistent underperformance on certain SKUs
+
+
+
+# 📦 Imports
+import pandas as pd
+import numpy as np
+
+# 🧼 1. Load and Clean Data
+df = pd.read_csv("DTY_Efficiency_Dashboard_Data.csv")
+
+# Drop unnecessary unnamed columns if present
+df = df.loc[:, ~df.columns.str.contains("^Unnamed")]
+
+# Clean column names (strip extra spaces)
+df.columns = df.columns.str.strip()
+
+# Convert Eficiencia column to numeric (strip % and handle nulls)
+df['Eficiencia'] = (
+    df['Eficiencia']
+    .astype(str)
+    .str.replace('%', '', regex=False)
+    .str.replace(',', '.', regex=False)
+    .replace('nan', np.nan)
+    .astype(float) / 100
+)
+
+# Parse dates
+df['Fecha'] = pd.to_datetime(df['Fecha'], errors='coerce')
+
+# Drop rows with missing efficiency or date
+df_clean = df.dropna(subset=['Eficiencia', 'Fecha'])
+
+# 🧪 Final cleaned dataset ready for analysis
+print(f"✅ Cleaned dataset shape: {df_clean.shape}")
+
+
+
+
+# 2. SKU + Machine-Level Summary Stats
+grouped_stats = (
+    df_clean
+    .groupby(['Lote_DTY', 'Máquina'])
+    .agg(
+        Count=('Eficiencia', 'count'),
+        Mean_Eficiencia=('Eficiencia', 'mean'),
+        Std_Eficiencia=('Eficiencia', 'std')
+    )
+    .reset_index()
+    .sort_values(by='Mean_Eficiencia', ascending=False)
+)
+
+# 🧾 Show top records
+grouped_stats.head(10)
+
+
+
+
+# 📈 3. SKUs That Ran on Multiple Machines (to check for variation)
+sku_variation = (
+    df_clean.groupby('Lote_DTY')['Máquina']
+    .nunique()
+    .reset_index()
+    .rename(columns={'Máquina': 'Machines_Used'})
+)
+
+# Merge to get observations + efficiency metrics
+sku_summary = (
+    df_clean.groupby('Lote_DTY')
+    .agg(
+        Observations=('Eficiencia', 'count'),
+        Overall_Mean_Eficiencia=('Eficiencia', 'mean'),
+        Overall_Std_Eficiencia=('Eficiencia', 'std')
+    )
+    .reset_index()
+    .merge(sku_variation, on='Lote_DTY')
+)
+
+# Keep only SKUs that ran on 2+ machines
+multi_machine_skus = sku_summary[sku_summary['Machines_Used'] >= 2]
+
+# 📌 Sort to highlight efficiency differences
+multi_machine_skus.sort_values(by='Overall_Std_Eficiencia', ascending=False).head(10)
+
+
+# 📌 4. Machine Performance for Selected SKUs (e.g., from above analysis)
+selected_skus = ['F5C177A6', 'E1A155A6', 'E4C467A2']  # update as needed
+
+sku_machine_breakdown = (
+    df_clean[df_clean['Lote_DTY'].isin(selected_skus)]
+    .groupby(['Lote_DTY', 'Máquina'])
+    .agg(
+        Observations=('Eficiencia', 'count'),
+        Mean_Eficiencia=('Eficiencia', 'mean'),
+        Std_Eficiencia=('Eficiencia', 'std')
+    )
+    .reset_index()
+    .sort_values(by=['Lote_DTY', 'Mean_Eficiencia'], ascending=[True, False])
+)
+
+sku_machine_breakdown
+
+
+
+# 💾 Optional: Export Clean Data for Dashboard Use
+df_clean.to_csv("cleaned_dty_efficiency_data.csv", index=False)
+
+
+
+
