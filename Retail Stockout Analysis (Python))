@@ -1,0 +1,96 @@
+# Retail Stockout KPI Analysis 📦📉
+
+This project analyzes real-world perishable retail data from 900 stores to identify stockout-driven sales risks. Using hourly time-series data, I engineered product-store-level KPIs for daily performance monitoring.
+
+## Key Business KPIs
+- 🧮 `total_units_sold`
+- ⏰ `total_stockout_hours`
+- 🔁 `stockout_rate` (normalized per 17-hour business day)
+- 🚨 `mismatch_hours` (sales recorded during stockouts)
+
+## Business Questions Answered
+- Which SKUs are most impacted by stockouts?
+- Do stockouts occur during high-sales windows?
+- Are stores logging sales while inventory is 0?
+- Where are process or forecasting breakdowns occurring?
+
+## Tools Used
+- Python (Pandas, NumPy)
+- Hugging Face Datasets
+- Tableau Public (for dashboarding KPIs)
+
+## Data Source
+This dataset is publicly available on [Hugging Face Datasets](https://huggingface.co/datasets/Dingdong-Inc/FreshRetailNet-50K) and was released by Dingdong Inc. in 2025.  
+Citation: *FreshRetailNet‑50K: Benchmark Dataset for Perishable Retail Forecasting with Stockouts and Promotions, 2025.*
+
+## Outputs
+- Cleaned dataset: `daily_kpi_summary.csv`
+- Tableau-ready KPIs for visual trend and SKU risk analysis
+
+## Summary
+This project demonstrates real-world retail operations analysis using structured ETL, time-series decomposition, and visual executive reporting — ready for integration into a data-driven inventory management strategy.
+
+
+
+from datasets import load_dataset
+import pandas as pd
+
+# Load ~10% of data as a sample
+ds = load_dataset("Dingdong-Inc/FreshRetailNet-50K", split="train[:10%]")
+df = pd.DataFrame(ds)
+df.head()
+
+
+import numpy as np
+
+# Make a copy to work with
+df_expanded = df[['city_id', 'store_id', 'product_id', 'dt', 'hours_sale', 'hours_stock_status']].copy()
+
+# Repeat each row 24 times (for 24 hours in a day)
+df_expanded = df_expanded.loc[df_expanded.index.repeat(24)].reset_index(drop=True)
+
+# Add hour column
+df_expanded['hour'] = list(range(24)) * (len(df) if len(df) > 0 else 0)
+
+# Flatten hourly sales and stock lists
+df_expanded['hourly_sale'] = np.concatenate(df['hours_sale'].values)
+df_expanded['hourly_stock'] = np.concatenate(df['hours_stock_status'].values)
+
+# Preview
+df_expanded.head(10)
+
+
+
+# Identify stockout periods where sales still occurred
+stockout_sales = df_expanded[
+    (df_expanded['hourly_stock'] == 0) &
+    (df_expanded['hourly_sale'] > 0)
+]
+
+# Count total mismatch cases
+mismatch_count = stockout_sales.shape[0]
+
+# Preview mismatches
+stockout_sales.head()
+
+
+# Step 1: Daily grouping
+kpi_df = df_expanded.groupby(['store_id', 'product_id', 'dt']).agg(
+    total_units_sold=('hourly_sale', 'sum'),
+    total_stockout_hours=('hourly_stock', lambda x: (x == 0).sum()),
+    total_sale_hours=('hourly_sale', lambda x: (x > 0).sum())
+).reset_index()
+
+# Step 2: Business logic columns
+kpi_df['stockout_rate'] = kpi_df['total_stockout_hours'] / 17  # 6AM–10PM business hours
+
+# Optional: flag mismatch days
+mismatch_hours = df_expanded[
+    (df_expanded['hourly_stock'] == 0) & (df_expanded['hourly_sale'] > 0)
+]
+mismatch_flags = mismatch_hours.groupby(['store_id', 'product_id', 'dt']).size().reset_index(name='mismatch_hours')
+kpi_df = kpi_df.merge(mismatch_flags, on=['store_id', 'product_id', 'dt'], how='left')
+kpi_df['mismatch_hours'] = kpi_df['mismatch_hours'].fillna(0).astype(int)
+
+# Preview summary
+kpi_df.head()
